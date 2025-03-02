@@ -22,13 +22,14 @@
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-table me-1"></i>
-            Pending Bookings
+            Package Bookings
         </div>
         <div class="card-body">
             {% if bookings %}
             <table id="datatablesSimple" class="table table-striped">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>User</th>
                         <th>Name</th>
                         <th>Email</th>
@@ -42,32 +43,39 @@
                 <tbody>
                     {% for booking in bookings %}
                     <tr>
+                        <td>{{ booking.id }}</td>
                         <td>{{ booking.byuser }}</td>
                         <td>{{ booking.name }}</td>
                         <td>{{ booking.email }}</td>
                         <td>{{ booking.country }}</td>
-                        <td><small>To be calculated</small></td>
+                        <td>{{ booking.price|currency }}</td>
                         <td>{{ booking.travel_date }}</td>
                         <td>{{ booking.email }}</td>
                         <td>
-                            <!-- Accept Booking -->
-                            <form action="{{ url_for('accept_booking', id=booking.id) }}" method="POST" style="display:inline;">
-                                <button type="submit" class="btn btn-success btn-sm">Accept</button>
-                            </form>
-                            <!-- Cancel Booking -->
-                            <!-- <form action="{{ url_for('admin_cancel_booking', id=booking.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
-                                <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
-                            </form> -->
-                            <button type="submit" class="btn btn-danger btn-sm cancel-booking" data-form-url="{{ url_for('admin_cancel_booking', id=booking.id) }}">Cancel</button>
+                            {% if booking.status == 'PENDING' %}
+                                <!-- Accept Booking -->
+                                <form action="{{ url_for('accept_booking', id=booking.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                </form>
+                                <button type="submit" class="btn btn-danger btn-sm cancel-booking" data-form-url="{{ url_for('admin_cancel_booking', id=booking.id) }}">Cancel</button>
+                            {% endif %}
+
+                            {% if booking.status == 'USER_PAYMENT' %}
+                                <a class="btn btn-success btn-sm" href="{{ url_for('paid_booking', id=booking.id) }}">Mark Paid</a>
+                            {% endif %}
+
+                            {% if booking.status == 'PAID' %}
+                                <br/><a class="btn btn-secondary btn-sm" href="{{ url_for('ticketed_booking', id=booking.id) }}">Generate Ticket</a>
+                            {% endif %}
+
+                            {% if booking.status == 'TICKET' %}
+                                <br/><a class="btn btn-secondary btn-sm" href="#">View Ticket</a>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
-
-            <div class="modal-container">
-                <div class="form"></div>
-            </div>
 
             {% else %}
             <div class="alert alert-info">
@@ -77,6 +85,8 @@
         </div>
     </div>
 
+
+
     <div class="card mt-5">
         <div class="card-header">
             <i class="fas fa-check me-1"></i>
@@ -84,9 +94,10 @@
         </div>
         <div class="card-body">
             {% if custom_tours %}
-            <table id="customTours" class="table table-striped">
+            <table id="customTours" class="table table-striped data-table">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Country</th>
@@ -98,6 +109,7 @@
                 <tbody>
                     {% for custom_tour in custom_tours %}
                     <tr>
+                        <td>CT{{ custom_tour.id }}</td>
                         <td>{{ custom_tour.name }}</td>
                         <td>{{ custom_tour.email }}</td>
                         <td>{{ custom_tour.country }}</td>
@@ -129,47 +141,6 @@
             {% else %}
             <div class="alert alert-info">
                 No custom tours found.
-            </div>
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="card mt-5">
-        <div class="card-header">
-            <i class="fas fa-check me-1"></i>
-            Approved Bookings
-        </div>
-        <div class="card-body">
-            {% if approved_bookings %}
-            <table id="approvedBookings" class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>User</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Package</th>
-                        <th>Price</th>
-                        <th>Departure Date</th>
-                        <th>Contact</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for booking in approved_bookings %}
-                    <tr>
-                        <td>{{ booking.byuser }}</td>
-                        <td>{{ booking.name }}</td>
-                        <td>{{ booking.email }}</td>
-                        <td>{{ booking.package }}</td>
-                        <td>{{ booking.price }}</td>
-                        <td>{{ booking.deptr_date }}</td>
-                        <td>{{ booking.contact }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <div class="alert alert-info">
-                No approved bookings found.
             </div>
             {% endif %}
         </div>

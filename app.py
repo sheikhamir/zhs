@@ -79,11 +79,11 @@ def bookings():
         return redirect(url_for('login'))
     
     cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cur.execute("SELECT * FROM `bookings`")
+    cur.execute("SELECT * FROM `bookings` ORDER BY `id` DESC")
     bookings = cur.fetchall()
 
     cur.execute("SELECT * FROM `tickets`")
-    approved_bookings = cur.fetchall()
+    tickets = cur.fetchall()
 
     # cur.execute("SELECT * FROM `custom_tours`")
     # custom_tours = cur.fetchall()
@@ -111,9 +111,9 @@ def bookings():
 
     cur.close()
     
-    return render_template('admin/bookings.html', bookings=bookings, approved_bookings=approved_bookings, cancelled_bookings=cancelled_bookings, custom_tours=custom_tours)
+    return render_template('admin/bookings.html', bookings=bookings, tickets=tickets, custom_tours=custom_tours)
 
-@app.route('/admin/accept-booking/<int:id>', methods=['GET'])
+@app.route('/admin/accept-booking/<int:id>', methods=['GET', 'POST'])
 def accept_booking(id):
     # Checks for authentication
     if not logged_in() or not is_admin():

@@ -74,6 +74,7 @@
         <table class="table">
             <thead class="thead-dark">
                 <tr>
+                    <th scope="col">ID</th>
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Package</th>
@@ -86,6 +87,7 @@
             <tbody>
                 {% for booking in bookings_approved %}
                 <tr>
+                    <td>{{ booking.id }}</td>
                     <td>{{ booking.name }}</td>
                     <td>{{ booking.email }}</td>
                     <td>{{ booking.package }}</td>
@@ -94,7 +96,7 @@
                     <td>{{ booking.contact }}</td>
                     <td>
                         Awaiting payment
-                        {% if flight.status == 'USER_PAYMENT' %}
+                        {% if booking.status == 'USER_PAYMENT' %}
                             <br/><a href="#">Pay Now</a>
                         {% endif %}
                     </td>
