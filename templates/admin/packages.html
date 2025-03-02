@@ -1,0 +1,69 @@
+{% extends 'template.admin.html' %}
+
+{% block title %}Packages | ZHS Tour - Admin panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">
+        <i class="fa-solid fa-box-archive"></i>
+        Packages
+        <a href="{{ url_for('add_packages') }}" class="btn btn-primary"><i class="fa-solid fa-circle-plus"></i> New</a>
+    </h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Admin Panel</li>
+    </ol>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div>
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Packages
+        </div>
+        <div class="card-body">
+            <table id="datatablesSimple">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Country</th>
+                        <th>Days</th>
+                        <th>Person</th>
+                        <th>Price</th>
+                        <th>Description</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for package in packages %}
+                    <tr>
+                        <td>
+                            <img src="{{ url_for('static', filename=package[6]) }}" alt="test" style="max-width:150px;">
+                        </td>
+                        <td>{{ package[1] }}</td>
+                        <td>{{ package[2] }}</td>
+                        <td>{{ package[3] }}</td>
+                        <td>{{ package[4] }}</td>
+                        <td>{{ package[5] }}</td>
+                        <td>
+                            <form action="{{ url_for('delete_package', package_id=package[0]) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this package?');">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="fa-regular fa-trash-can"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

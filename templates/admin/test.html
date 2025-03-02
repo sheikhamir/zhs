@@ -1,0 +1,37 @@
+{% extends 'template.admin.html' %}
+
+{% block title %}ZHS Tour - Admin panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4"><i class="fa-solid fa-user-secret"></i> Admins</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Admin Panel</li>
+    </ol>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Admins Data
+        </div>
+        <div class="card-body">
+            
+        
+            <table id="datatablesSimple">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Password</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>admin</td>
+                        <td>admin123</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

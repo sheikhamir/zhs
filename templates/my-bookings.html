@@ -1,0 +1,220 @@
+{% if logged_in %}
+{% extends 'template.user.html' %}
+{% else %}
+{% extends 'template.base.html' %}
+{% endif %}
+
+{% block title %}Packages - ZHS Tours{% endblock %}
+
+{% block heading %}Packages{% endblock %}
+
+{% block content %}
+<!-- Bookings Section -->
+<div class="container-xxl py-5">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="mb-3">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}" role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Booked Packages</h6>
+            <h1 class="mb-5">Pending Packages</h1>
+        </div>
+        {% if bookings_pending %}
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Package</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Departure Date</th>
+                    <!-- <th scope="col">Contact</th> -->
+                    <th scope="col">Request</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for pending_booking in bookings_pending %}
+                <tr>
+                    <td>{{ pending_booking.name }}</td>
+                    <td>{{ pending_booking.email }}</td>
+                    <td>{{ pending_booking.country }}</td>
+                    <td>{{ pending_booking.price }}</td>
+                    <td>{{ pending_booking.travel_date }}</td>
+                    <!-- <td>{{ pending_booking.contact }}</td> -->
+                    <td>
+                        <form action="{{ url_for('cancel_booking', id=pending_booking.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to cancel the booking?');">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Cancel</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info text-center">No pending bookings found.</div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Approved Packages -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h1 class="mb-5">Approved Packages</h1>
+        </div>
+        {% if bookings_approved %}
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Package</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Departure Date</th>
+                    <th scope="col">Contact</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings_approved %}
+                <tr>
+                    <td>{{ booking.name }}</td>
+                    <td>{{ booking.email }}</td>
+                    <td>{{ booking.package }}</td>
+                    <td>{{ booking.price }}</td>
+                    <td>{{ booking.departure_date }}</td>
+                    <td>{{ booking.contact }}</td>
+                    <td>
+                        Awaiting payment
+                        {% if flight.status == 'USER_PAYMENT' %}
+                            <br/><a href="#">Pay Now</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info text-center">No approved bookings found.</div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Custom Tours -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h1 class="mb-5">Custom Tours</h1>
+        </div>
+        {% if custom_tours %}
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Country</th>
+                    <th scope="col">People</th>
+                    <th scope="col">Total Tours</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in custom_tours %}
+                <tr>
+                    <td>{{ booking.name }}</td>
+                    <td>{{ booking.email }}</td>
+                    <td>{{ booking.country }}</td>
+                    <td>{{ booking.people }}</td>
+                    <td>{{ booking.total_tours }}</td>
+                    <td>{{ booking.status|status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info text-center">No approved bookings found.</div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Flights -->
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h1 class="mb-5">Flight bookings</h1>
+        </div>
+        {% if flights %}
+        <table class="table">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Email</th>
+                    <th scope="col">Ticket Type</th>
+                    <th scope="col">Flight Class</th>
+                    <th scope="col">Departure City</th>
+                    <th scope="col">Destination City</th>
+                    <th scope="col">Departure Date</th>
+                    <th scope="col">Return Date</th>
+                    <th scope="col">People</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for flight in flights %}
+                <tr>
+                    <td>{{ flight.email }}</td>
+                    <td>{{ flight.ticket_type }}</td>
+                    <td>{{ flight.flight_class }}</td>
+                    <td>{{ flight.departure_city }}</td>
+                    <td>{{ flight.destination_city }}</td>
+                    <td>{{ flight.departure_date }}</td>
+                    <td>{{ flight.return_date }}</td>
+                    <td>{{ flight.people }}</td>
+                    <td>
+                        {{ flight.status|status }}
+
+                        {% if flight.status == 'USER_PAYMENT' %}
+                            <br/><a href="#">Pay Now</a>
+                        {% endif %}
+
+                        {% if flight.status == 'PAID' %}
+                            <br/><small>Awaiting ticket</small>
+                        {% endif %}
+
+                        {% if flight.status == 'TICKET' %}
+                            <br/><a href="#">Download Ticket</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="alert alert-info text-center">No approved bookings found.</div>
+        {% endif %}
+    </div>
+</div>
+<!-- Bookings Section End -->
+{% endblock %}
+
+{% block javascript %}
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/tempusdominus/js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/tempusdominus/js/moment.timezone.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+<!-- Template Javascript -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

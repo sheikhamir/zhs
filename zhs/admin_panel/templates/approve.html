@@ -1,0 +1,32 @@
+<?php
+include '../config/dbcon.php';
+
+$name = $_GET['id'];
+
+$q = "SELECT * FROM `bookings` WHERE name = '$name' ";
+$result = $con->query($q);
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $ur = $row['byuser'];
+        $n = $row['name'];
+        $e  = $row['email'];
+        $pk  = $row['package'];
+        $pr  = $row['price'];
+        $dd  = $row['deptr_date'];
+        $ct  = $row['contact'];
+
+        $qa = "INSERT INTO `tickets`(`name`, `email`, `package`, `price`, `deptr_date`, `contact`, `byuser`) VALUES ('$n','$e','$pk','$pr','$dd','$ct','$ur')";
+        mysqli_query($con, $qa);
+
+        $query = "DELETE FROM bookings WHERE name = '$name'";
+        $qr = mysqli_query($con,$query);
+
+    }
+    echo "Record Inserted";
+    header("Location: bookings.php");
+    
+} else {
+    echo "Record Not Found";
+}
+?>

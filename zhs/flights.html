@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Home - ZHS Tours and Travels</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="img/favicon.ico" rel="icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+
+    <style>
+        /* Main container styling */
+        body {
+            background-color: #f3f3f3;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            width: 80%;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+
+        /* Tabs styling */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .tabs button {
+            flex: 1;
+            padding: 15px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background: #00d0ff;
+            color: #fff;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .tabs button:not(:last-child) {
+            margin-right: 10px;
+        }
+
+        /* Form styling */
+        .form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .form-group {
+            flex: 1 1 45%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .search-button {
+            background: #00d0ff;
+            color: #fff;
+            font-size: 18px;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .search-button:hover {
+            background: #00a6c7;
+        }
+
+        /* Additional styles for flight selection */
+        .ticket-type {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid position-relative p-0">
+        <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+            <a href="" class="navbar-brand p-0">
+                <h1 class="text-primary m-0"><i class="fa fa-map-marker-alt me-3"></i>Traveler's Choice</h1>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="fa fa-bars"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav ms-auto py-0">
+                    <a href="index.php" class="nav-item nav-link"><i class="fa-solid fa-house"></i> Home</a>
+                    <a href="about.php" class="nav-item nav-link">About</a>
+                    <a href="custom.html" class="nav-item nav-link">Custom tour</a>
+                    <a href="hotels.html" class="nav-item nav-link">Hotels</a>
+                    <a href="flights.html" class="nav-item nav-link active">Flights</a>
+                    <a href="packages.php" class="nav-item nav-link">Packages</a>
+                </div>
+                <a href="login.php" class="btn btn-primary rounded-pill py-2 px-4">Login</a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <button style="justify-content: center;">Flights</button>
+        </div>
+
+        <div class="form">
+            <div class="form-group ticket-type">
+                <label for="ticket-type">Ticket Type</label>
+                <select id="ticket-type" onchange="toggleReturnDate()">
+                    <option value="one-way">One Way</option>
+                    <option value="return">Return</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="departure-city">Departure City</label>
+                <input type="text" id="departure-city" placeholder="Enter Departure City">
+            </div>
+            <div class="form-group">
+                <label for="destination-city">Destination City</label>
+                <input type="text" id="destination-city" placeholder="Enter Destination City">
+            </div>
+            <div class="form-group">
+                <label for="departure-date">Departure Date</label>
+                <input type="date" id="departure-date">
+            </div>
+            <div class="form-group" id="return-date-group" style="display: none;">
+                <label for="return-date">Return Date</label>
+                <input type="date" id="return-date">
+            </div>
+            <div class="form-group">
+                <label for="passengers">Number of Passengers</label>
+                <select id="passengers">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="class">Class</label>
+                <select id="class">
+                    <option value="economy">Economy</option>
+                    <option value="business">Business</option>
+                    <option value="first-class">First Class</option>
+                </select>
+            </div>
+            <button class="search-button">SEARCH</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleReturnDate() {
+            const ticketType = document.getElementById("ticket-type").value;
+            const returnDateGroup = document.getElementById("return-date-group");
+            returnDateGroup.style.display = ticketType === "return" ? "block" : "none";
+        }
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

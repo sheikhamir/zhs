@@ -1,0 +1,298 @@
+<?php
+include '../config/dbcon.php';
+session_start();
+
+?>
+<?php
+$status;
+
+if (isset($_SESSION['name'])) {
+    $status = "logout";
+}
+if (!(isset($_SESSION['name']))) {
+
+    $_SESSION['error'] = "Please Login First";
+    echo "<script>window.location.href='../login.php'</script>";
+}
+if (isset($_POST['logout'])) {
+
+    session_destroy();
+    echo "<script>window.location.href='../login.php'</script>";
+}
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>ZHS Tours - Admin Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+</head>
+
+<body class="sb-nav-fixed">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-primary">
+        <!-- Navbar Brand-->
+        <a class="navbar-brand ps-3" href="index.html"><i class="fa-solid fa-mountain-sun"></i> ZHS Tours Admin Panel
+        </a>
+        <!-- Sidebar Toggle-->
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
+                class="fas fa-bars"></i></button>
+        <!-- Navbar Search-->
+        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0" action="" method="post">
+            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li class="text-center "></li>
+                </li>
+                <h6 class="w-100"></h6> Mr.
+                <?php echo $_SESSION['name']; ?>
+                </h6>
+                </li>
+                <form action="" method="post">
+                    <button class="btn btn-primary w-100  btn-sm " type="submit" name="logout">
+                        <?php echo $status; ?>
+                    </button>
+                </form>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </form>
+        <!-- Navbar-->
+
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+                        <div class="sb-sidenav-menu-heading">Core</div>
+                        <a class="nav-link" href="index.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-chart-line"></i></div>
+                            Dashboard
+                        </a>
+                        <div class="sb-sidenav-menu-heading">Interface</div>
+                        <a class="nav-link" href="bookings.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-bars"></i></div>
+                            Bookings
+                        </a>
+
+                        <a class="nav-link" href="tickets.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-bars"></i></div>
+                            Tickets
+                        </a>
+
+                        <a class="nav-link" href="add_packages.html">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-ban"></i></div>
+                            packages
+                        </a>
+
+
+                        <div class="collapse" id="collapsePages" aria-labelledby="headingTwo"
+                            data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+
+                                <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne"
+                                    data-bs-parent="#sidenavAccordionPages">
+                                    <nav class="sb-sidenav-menu-nested nav">
+
+                                    </nav>
+                                </div>
+
+                                <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne"
+                                    data-bs-parent="#sidenavAccordionPages">
+                                    <nav class="sb-sidenav-menu-nested nav">
+
+                                    </nav>
+                                </div>
+                            </nav>
+                        </div>
+                        <div class="sb-sidenav-menu-heading">Addons</div>
+                        <a class="nav-link" href="users.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+                            Users
+                        </a>
+                        <a class="nav-link" href="admins.html">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user"></i></div>
+                            Admins
+                        </a>
+                    </div>
+                </div>
+                <div class="sb-sidenav-footer">
+                    <div class="small">ZHS Tours And Travels</div>
+                </div>
+            </nav>
+        </div>
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid px-4">
+                    <h1 class="mt-4"><i class="fa-solid fa-chart-line"></i> Dashboard</h1>
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item active">Dashboard</li>
+                    </ol>
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card bg-primary text-white mb-4">
+                                <div class="card-body">
+                                    <h4><i class="fa-solid fa-clipboard"></i> Bookings</h4>
+                                </div>
+                                <div class="card-body">
+                                    <?php
+
+                                    $dash_bookings_query = "SELECT * from bookings";
+
+                                    $dash_bookings_query_run = mysqli_query($con, $dash_bookings_query);
+
+                                    if ($bookings_total = mysqli_num_rows($dash_bookings_query_run)) {
+                                        echo '<h3 class="mb-0">' . $bookings_total . ' </h3>';
+                                    } else {
+                                        echo "<h3 class='mb-8'>0</h3>";
+                                    }
+                                    ?>
+                                </div>
+                                <div class="card-footer d-flex align-items-center justify-content-between">
+                                    <a class="small text-white stretched-link" href="bookings.html"><i
+                                            class="fa-solid fa-eye"></i> View</a>
+                                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-3 col-md-6">
+                            <div class="card bg-warning text-white mb-4">
+                                <div class="card-body">
+                                    <h3><i class="fa-solid fa-square-check"></i> Tickets</h3>
+                                </div>
+                                <div class="card-body">
+                                <?php
+
+                                $dash_tickets_query = "SELECT * from tickets";
+
+                                $dash_tickets_query_run = mysqli_query($con, $dash_tickets_query);
+
+                                if ($tickets_total = mysqli_num_rows($dash_tickets_query_run)) {
+                                    echo '<h3 class="mb-0">' . $tickets_total . ' </h3>';
+                                } else {
+                                    echo "<h3 class='mb-8'>0</h3>";
+                                }
+                                ?>
+                            </div>
+                            <div class="card-footer d-flex align-items-center justify-content-between">
+                                <a class="small text-white stretched-link" href="tickets.html"><i class="fa-solid fa-eye"></i>
+                                    View</a>
+                                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card bg-success text-white mb-4">
+                            <div class="card-body">
+                                <h3><i class="fa-solid fa-users"></i> Users</h3>
+                            </div>
+                            <div class="card-body">
+                                <?php
+
+                                $dash_users_query = "SELECT * from users";
+
+                                $dash_users_query_run = mysqli_query($con, $dash_users_query);
+
+                                if ($users_total = mysqli_num_rows($dash_users_query_run)) {
+                                    echo '<h3 class="mb-0">' . $users_total . ' </h3>';
+                                } else {
+                                    echo "<h3 class='mb-8'>0</h3>";
+                                }
+                                ?>
+                            </div>
+                            <div class="card-footer d-flex align-items-center justify-content-between">
+                                <a class="small text-white stretched-link" href="users.html"><i class="fa-solid fa-eye"></i>
+                                    View</a>
+                                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card bg-danger text-white mb-4">
+                            <div class="card-body">
+                                <h3><i class="fa-solid fa-user-secret"></i> Admins</h3>
+                            </div>
+                            <div class="card-body">
+                                <?php
+
+                                $dash_admins_query = "SELECT * from admins";
+
+                                $dash_admins_query_run = mysqli_query($con, $dash_admins_query);
+
+                                if ($admins_total = mysqli_num_rows($dash_admins_query_run)) {
+                                    echo '<h3 class="mb-0">' . $admins_total . ' </h3>';
+                                } else {
+                                    echo "<h3 class='mb-8'>0</h3>";
+                                }
+                                ?>
+                            </div>
+                            <div class="card-footer d-flex align-items-center justify-content-between">
+                                <a class="small text-white stretched-link" href="admins.html"><i class="fa-solid fa-eye"></i>
+                                    View</a>
+                                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-md-6">
+                        <div class="card bg-dark text-white mb-4">
+                            <div class="card-body">
+                                <h3><i class="fa-solid fa-box-archive"></i> Packages</h3>
+                            </div>
+                            <div class="card-body">
+                                <?php
+
+                                $dash_packages_query = "SELECT * from packages";
+
+                                $dash_packages_query_run = mysqli_query($con, $dash_packages_query);
+
+                                if ($packages_total = mysqli_num_rows($dash_packages_query_run)) {
+                                    echo '<h3 class="mb-0">' . $packages_total . ' </h3>';
+                                } else {
+                                    echo "<h3 class='mb-8'>0</h3>";
+                                }
+                                ?>
+                            </div>
+                            <div class="card-footer d-flex align-items-center justify-content-between">
+                                <a class="small text-white stretched-link" href="add_packages.php"><i
+                                        class="fa-solid fa-eye"></i> View</a>
+                                <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </main>
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; ZHS Tours and Travels</div>
+
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+    <script src="js/scripts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="assets/demo/chart-area-demo.js"></script>
+    <script src="assets/demo/chart-bar-demo.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
+        crossorigin="anonymous"></script>
+    <script src="js/datatables-simple-demo.js"></script>
+</body>
+
+</html>

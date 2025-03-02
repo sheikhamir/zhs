@@ -1,0 +1,79 @@
+{% extends 'template.admin.html' %}
+
+{% block title %}ZHS Tour - Admin panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4"><i class="fa-solid fa-plane-departure"></i> Flights</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Admin Panel</li>
+    </ol>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div>
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            All Flights
+        </div>
+        <div class="card-body">
+            <table id="datatablesSimple">
+                <thead>
+                    <tr>
+                        <th scope="col">Email</th>
+                        <th scope="col">Ticket Type</th>
+                        <th scope="col">Flight Class</th>
+                        <th scope="col">Departure City</th>
+                        <th scope="col">Destination City</th>
+                        <th scope="col">Departure Date</th>
+                        <th scope="col">Return Date</th>
+                        <th scope="col">People</th>
+                        <th scope="col">Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for flight in flights %}
+                        <tr>
+                            <td>{{ flight.email }}</td>
+                            <td>{{ flight.ticket_type }}</td>
+                            <td>{{ flight.flight_class }}</td>
+                            <td>{{ flight.departure_city }}</td>
+                            <td>{{ flight.destination_city }}</td>
+                            <td>{{ flight.departure_date }}</td>
+                            <td>{{ flight.return_date }}</td>
+                            <td>{{ flight.people }}</td>
+                            <td>
+                                {{ flight.status|status }}
+
+                                {% if flight.status == 'PENDING' %}
+                                    <br/><a class="btn btn-primary btn-sm" href="{{ url_for('view_flight_details', id=flight.id) }}">Review</a>
+                                {% endif %}
+
+                                {% if flight.status == 'USER_PAYMENT' %}
+                                    <br/><a class="btn btn-success btn-sm" href="{{ url_for('flight_paid', id=flight.id) }}">Mark Paid</a>
+                                {% endif %}
+
+                                {% if flight.status == 'PAID' %}
+                                    <br/><a class="btn btn-secondary btn-sm" href="{{ url_for('flight_ticketed', id=flight.id) }}">Generate Ticket</a>
+                                {% endif %}
+
+                                {% if flight.status == 'TICKET' %}
+                                    <br/><a class="btn btn-secondary btn-sm" href="#">View Ticket</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends 'template.admin.html' %}
+
+{% block title %}ZHS Tour - Admin panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4"><i class="fa-solid fa-chart-line"></i> Dashboard</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Dashboard</li>
+    </ol>
+    <div class="row">
+        <div class="col-xl col-md-6">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <h4><i class="fa-solid fa-clipboard"></i> Bookings</h4>
+                </div>
+                <div class="card-body">
+                    <h3 class='mb-8'>{{ data['bookings'][0] }}</h3>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link text-decoration-none" href="{{ url_for('bookings') }}"><i class="fa-solid fa-eye"></i> View</a>
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl col-md-6">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <h3><i class="fa-solid fa-square-check"></i> Tickets</h3>
+                </div>
+                <div class="card-body">
+                    <h3 class='mb-8'>{{ data['tickets'][0] }}</h3>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link text-decoration-none" href="{{ url_for('view_flights') }}"><i class="fa-solid fa-eye"></i> View</a>
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl col-md-6">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <h3><i class="fa-solid fa-users"></i> Users</h3>
+                </div>
+                <div class="card-body">
+                    <h3 class='mb-8'>{{ data['users'][0] }}</h3>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link text-decoration-none" href="{{ url_for('users') }}"><i class="fa-solid fa-eye"></i> View</a>
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl col-md-6">
+            <div class="card bg-danger text-white mb-4">
+                <div class="card-body">
+                    <h3><i class="fa-solid fa-user-secret"></i> Admins</h3>
+                </div>
+                <div class="card-body">
+                    <h3 class='mb-8'>{{ data['admins'][0] }}</h3>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link text-decoration-none" href="{{ url_for('admins') }}"><i class="fa-solid fa-eye"></i> View</a>
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl col-md-6">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-body">
+                    <h3><i class="fa-solid fa-box-archive"></i> Packages</h3>
+                </div>
+                <div class="card-body">
+                    <h3 class='mb-8'>{{ data['packages'][0] }}</h3>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link text-decoration-none" href="{{ url_for('view_packages') }}"><i class="fa-solid fa-eye"></i> View</a>
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl col-md-6">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-body">
+                    <h3><i class="fa-solid fa-box-archive"></i> Custom Tours</h3>
+                </div>
+                <div class="card-body">
+                    <h3 class='mb-8'>{{ data['custom_tours'][0] }}</h3>
+                </div>
+                <div class="card-footer d-flex align-items-center justify-content-between">
+                    <a class="small text-white stretched-link text-decoration-none" href="{{ url_for('bookings') }}"><i class="fa-solid fa-eye"></i> View</a>
+                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

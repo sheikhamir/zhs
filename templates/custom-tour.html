@@ -1,0 +1,287 @@
+{% if logged_in %}
+{% extends 'template.user.html' %}
+{% else %}
+{% extends 'template.base.html' %}
+{% endif %}
+
+{% block title %}Custom Tour - ZHS Tours{% endblock %}
+
+{% block heading %}Prepare tour of your choice{% endblock %}
+
+{% block content %}
+<style>
+    /* .form-floating>.form-control~label,
+    .form-floating>.form-select~label {color:#EEE;} */
+    .form-control,
+    .form-control:focus,
+    .form-floating>.form-control,
+    .form-floating>.form-select {color:#FFF;}
+    .form-floating>.form-control~label {transform: scale(0.85) translateY(-0.4rem) translateX(0.15rem);}
+    .form-floating>.form-control~label~.description-msg {opacity:0;transition:all .3s;}
+    /* .form-floating>.form-control:focus~label {color:#FFF;} */
+    .form-floating>.form-control:focus~label~.description-msg {opacity:1;color:#000;}
+    select {background-color: #333; color: white;}
+    select option {background-color: #333;color: white;}
+    /* Optional: Add hover effect for better user experience */
+    select option:hover {background-color: #555;}
+</style>
+<div class="container-xxl py-5 wow fadeInUp" data-wow-delay="0.1s">
+    <div class="container">
+        <div class="booking p-5">
+            <div class="row g-5 align-items-center">
+                <div class="col-md-5 text-white">
+                    <h6 class="text-white text-uppercase">Booking</h6>
+                    <h1 class="text-white mb-4">Online Booking</h1>
+                    <p class="mb-4"> Create your perfect getaway with our user-customized tours! Choose your destinations, activities, and pace to craft an itinerary that reflects your unique interests. Whether it's a thrilling adventure, a serene escape, or a cultural deep dive, the journey is in your hands. Start planning your ideal travel experience today!</p>
+                </div>
+                <div class="col-md-7">
+                    <h1 class="text-white mb-4">Book A Tour</h1>
+                    <form id="custom-tour-form" onsubmit="return handleSubmit(event)">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control bg-transparent" id="name" name="name" placeholder="Your Name" required>
+                                    <label for="name">Your Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control bg-transparent" id="email" name="email" placeholder="Your Email" required>
+                                    <label for="email">Your Email</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control bg-transparent" id="address" name="address" placeholder="Your Address" required>
+                                    <label for="address">Your Address</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control bg-transparent" id="num-travelers" name="num-travelers" placeholder="Number of Travelers" min="1" value="1" required onchange="generateTravelerFields()">
+                                    <label for="num-days">Number of Travelers</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control bg-transparent" id="num-days" name="num-days" placeholder="Number of Days" min="1" value="5" required>
+                                    <label for="num-days">Number of Days</label>
+                                </div>
+                            </div>
+                            <div id="traveler-fields" class="col-md-12 mt-3"></div>
+                            <div class="col-md-12">
+                                <label class="text-white">Select Destination Countries</label>
+                            </div>
+                            {% for package in packages %}
+                                <div class="col-md-6">
+                                    <div class="d-flex flex-wrap">
+                                        <div class="form-check me-3">
+                                            <input class="form-check-input" type="checkbox" id="country-{{ package.country }}" name="countries[]" value="{{ package.country }}" onchange="toggleDateFields('{{ package.country }}')">
+                                            <label class="form-check-label text-white" for="country-{{ package.country }}">{{ package.country }}</label>
+                                            <div id="date-fields-{{ package.country }}" style="display: none;" class="mt-2 row g-3  conditional-date-fields">
+                                                <div class="col-md-6">
+                                                    <label class="text-white">Start Date</label>
+                                                    <input type="date" class="form-control bg-transparent" id="start-date-{{ package.country }}" name="start_dates[{{ package.country }}]" onchange="validateDates('{{ package.country }}')">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="text-white">End Date</label>
+                                                    <input type="date" class="form-control bg-transparent" id="end-date-{{ package.country }}" name="end_dates[{{ package.country }}]" onchange="validateDates('{{ package.country }}')">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <!-- <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select bg-transparent" id="hotel-type" name="hotel-type" required>
+                                        <option value="standard">Standard</option>
+                                        <option value="deluxe">Deluxe</option>
+                                        <option value="suite">Suite</option>
+                                    </select>
+                                    <label for="hotel-type">Hotel Type</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select bg-transparent" id="flight-class" name="flight-class" required>
+                                        <option value="economy">Economy</option>
+                                        <option value="business">Business</option>
+                                        <option value="first-class">First Class</option>
+                                    </select>
+                                    <label for="flight-class">Flight Class</label>
+                                </div>
+                            </div> -->
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control bg-transparent" placeholder="Other Itinerary Details" id="details" name="details" style="height: 100px"></textarea>
+                                    <label for="details">Other Itinerary Details</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button class="btn btn-outline-light w-100 py-3" type="submit">Submit Itinerary</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Booking Successful</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                We will contact you shortly after preparing your desired tour.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    function handleSubmit(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const form = document.getElementById('custom-tour-form');
+        const formData = new FormData(form); // Collect form data
+
+        fetch('/custom-tour', {
+            method: 'POST',
+            body: formData,
+        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.json(); // Assume the server responds with JSON
+                } else {
+                    throw new Error('Failed to submit the form');
+                }
+            })
+            .then((data) => {
+                if (data.success) {
+                    // Show the success modal
+                    const modal = new bootstrap.Modal(document.getElementById('successModal'));
+                    modal.show();
+
+                    // Optionally, reset the form
+                    form.reset();
+                    hideDateFields();
+                } else {
+                    // Handle server-side validation errors or other messages
+                    alert(data.message || 'An error occurred. Please try again.');
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('An unexpected error occurred. Please try again.');
+            });
+    }
+
+    function toggleDateFields(country) {
+        const checkbox = document.getElementById(`country-${country}`);
+        const dateFields = document.getElementById(`date-fields-${country}`);
+        dateFields.style.display = checkbox.checked ? 'flex' : 'none';
+    }
+
+    function hideDateFields() {
+        const conditionalFields = document.getElementsByTagName('.conditional-date-fields')
+        conditionalFields.style.display = 'none'
+    }
+
+    function validateDates(country) {
+        const startDate = document.getElementById(`start-date-${country}`);
+        const endDate = document.getElementById(`end-date-${country}`);
+        const today = new Date().toISOString().split('T')[0];
+        
+        if (startDate.value && startDate.value < today) {
+            alert('Start date cannot be in the past.');
+            startDate.value = '';
+        }
+        if (endDate.value && endDate.value < today) {
+            alert('End date cannot be in the past.');
+            endDate.value = '';
+        }
+        if (startDate.value && endDate.value && new Date(startDate.value) > new Date(endDate.value)) {
+            alert('End date must be after the start date.');
+            endDate.value = '';
+        }
+    }
+
+    function generateTravelerFields() {
+        const numTravelers = document.getElementById('num-travelers').value;
+        const container = document.getElementById('traveler-fields');
+        container.innerHTML = '';
+        
+        for (let i = 1; i <= numTravelers; i++) {
+            container.innerHTML += `
+                <div class="mt-3 row g-3">
+                    <label class="text-white">Traveler ${i} Details</label>
+                    <div class="col-md-12 pt-1">
+                        <div class="form-floating">
+                            <input type="text" class="form-control bg-transparent" id="traveler_${i}_name" name="traveler_${i}_name" placeholder="Your Name" required>
+                            <label for="traveler_${i}_name">Full Name</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12 pt-1">
+                        <div class="form-floating">
+                            <input type="email" class="form-control bg-transparent" id="traveler_${i}_email" name="traveler_${i}_email" placeholder="Your Email" required>
+                            <label for="traveler_${i}_email">Email</label>
+                        </div>
+                    </div>
+                    <div class="col-md-12 pt-1">
+                        <div class="form-floating">
+                            <input type="text" class="form-control bg-transparent" id="traveler_${i}_phone" name="traveler_${i}_phone" placeholder="Your Phone" required>
+                            <label for="traveler_${i}_phone">Phone</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6" pt-1>
+                        <div class="form-floating">
+                            <select class="form-select bg-transparent" id="traveler_${i}_hotel_type" name="traveler_${i}_hotel_type" required>
+                                <option value="standard">Standard</option>
+                                <option value="deluxe">Deluxe</option>
+                                <option value="suite">Suite</option>
+                            </select>
+                            <label for="traveler_${i}_hotel_type">Hotel Type</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 pt-1">
+                        <div class="form-floating">
+                            <select class="form-select bg-transparent" id="traveler_${i}_flight_class" name="traveler_${i}_flight_class" required>
+                                <option value="economy">Economy</option>
+                                <option value="business">Business</option>
+                                <option value="first-class">First Class</option>
+                            </select>
+                            <label for="traveler_${i}_flight_class">Flight Class</label>
+                        </div>
+                    </div>
+
+                </div>`;
+        }
+    }
+
+    generateTravelerFields();
+    hideDateFields();
+
+</script>
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/tempusdominus/js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/tempusdominus/js/moment.timezone.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+<!-- Template Javascript -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends 'template.admin.html' %}
+
+{% block title %}ZHS Tour - Admin panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4"><i class="fa-solid fa-plane-departure"></i> Review Flight</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Admin Panel</li>
+    </ol>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div>
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <div class="row g-3 pb-4">
+        <div class="col-lg-4 col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Propose Flight Options
+                </div>
+                <div class="card-body">
+                    <form id="flightProposalForm">
+                        <div class="row">
+                            <!-- Airline -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="airline">Airline</label>
+                                    <input type="text" class="form-control" id="airline" name="airline" required placeholder="Eg: PIA, Air Sial">
+                                </div>
+                            </div>
+                
+                            <!-- Timings -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="flight_timings">Flight Timings</label>
+                                    <input type="time" class="form-control" id="flight_timings" name="flight_timings" required placeholder="Eg: 22:45 PM">
+                                </div>
+                            </div>
+                
+                            <!-- Layovers -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="layovers">Layovers</label>
+                                    <input type="text" class="form-control" id="layovers" name="layovers" placeholder="Eg: Turkey 8 Hours (Optional)">
+                                </div>
+                            </div>
+                
+                            <!-- Total Cost -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="total_cost">Total Cost (PKR)<br/><small>(Including Service Charges)</small></label>
+                                    <input type="number" class="form-control" id="total_cost" name="total_cost" min="0" step="0.01" required placeholder="Eg: 25000.00">
+                                </div>
+                            </div>
+                
+                            <!-- Payment Instructions -->
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="payment_instructions">Payment Instructions</label>
+                                    <textarea class="form-control" id="payment_instructions" name="payment_instructions" rows="3" required></textarea>
+                                </div>
+                            </div>
+                
+                            <!-- Submit Button -->
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary mt-3">Submit Proposal</button>
+                            </div>
+                        </div>
+                    </form>   
+                </div> 
+            </div> 
+        </div>
+        <div class="col-lg-8 col-md-8">
+            <div class="row">
+                <div class="col-lg-10 col-md-12">
+                    <h2>Flight details from user</h2>
+                    <table class="table">
+                        <tr>
+                            <td>Email</td>
+                            <td>{{ flight.email }}</td>
+                        </tr>
+                        <tr>
+                            <td>Ticket Type</td>
+                            <td>{{ flight.ticket_type }}</td>
+                        </tr>
+                        <tr>
+                            <td>Departure City</td>
+                            <td>{{ flight.departure_city }}</td>
+                        </tr>
+                        <tr>
+                            <td>Destination City</td>
+                            <td>{{ flight.destination_city }}</td>
+                        </tr>
+                        <tr>
+                            <td>Departure Date</td>
+                            <td>{{ flight.departure_date }}</td>
+                        </tr>
+                        <tr>
+                            <td>Return Date</td>
+                            <td>{{ flight.return_date }}</td>
+                        </tr>
+                        <tr>
+                            <td>Flight Class</td>
+                            <td>{{ flight.flight_class }}</td>
+                        </tr>
+                        <tr>
+                            <td>Status</td>
+                            <td>{{ flight.status }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Passengers
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Contact</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Passport #</th>
+                        <th scope="col">Passport Country</th>
+                        <th scope="col">Passport Issue Date</th>
+                        <th scope="col">Passport</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for passenger in passengers %}
+                        <tr>
+                            <td>{{ passenger.name }}</td>
+                            <td>{{ passenger.contact }}</td>
+                            <td>{{ passenger.email }}</td>
+                            <td>{{ passenger.passport_number }}</td>
+                            <td>{{ passenger.passport_country }}</td>
+                            <td>{{ passenger.passport_issue }}</td>
+                            <td>
+                                {% if passenger['passport_picture'] %}
+                                    <a href="{{ url_for( passenger['passport_picture'] ) }}" target="_blank">View Picture</a>
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

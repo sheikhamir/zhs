@@ -1,0 +1,65 @@
+{% extends 'template.admin.html' %}
+
+{% block title %}Edit Hotel | ZHS Tour - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 mb-5">
+    <h1 class="mt-4"><i class="fa-solid fa-hotel"></i> Hotels</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Admin Panel</li>
+    </ol>
+    
+    <div class="card" style="max-width:800px;margin:0 auto;">
+        <div class="card-header text-center">
+            <i class="fa-solid fa-hotel"></i>
+            Edit Hotel
+        </div>
+        <div class="card-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div>
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            <form action="" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Hotel Name</label>
+                    <input type="text" name="name" class="form-control" id="name" value="{{ hotel[1] }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="location" class="form-label">Location (City/State)</label>
+                    <input type="text" name="location" class="form-control" id="location" value="{{ hotel[2] }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="rating" class="form-label">Rating</label>
+                    <input type="text" name="rating" class="form-control" id="rating" value="{{ hotel[3] }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="room_types" class="form-label">Room Types</label>
+                    <input type="text" name="room_types" class="form-control" id="room_types" value="{{ hotel[4] }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="price_per_night" class="form-label">Price Per Night</label>
+                    <input type="text" name="price_per_night" class="form-control" id="price_per_night" value="{{ hotel[5] }}" required>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea name="description" class="form-control" id="description" required>{{ hotel[6] }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="uploadfile" class="form-label">Upload New Image</label>
+                    <input type="file" name="uploadfile" class="form-control" id="uploadfile">
+                    <div id="fileHelp" class="form-text">Leave blank to keep the current image.</div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-success">Update Hotel</button>
+                    <a href="{{ url_for('view_hotels') }}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>        
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'template.admin.html' %}
+
+{% block title %}Add Packages | ZHS Tour - Admin panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4"><i class="fa-solid fa-user-secret"></i> Admins</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Admin Panel</li>
+    </ol>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div>
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <h1 class="text-center mb-3">Edit Admin</h1>
+    
+    <div class="card" style="max-width:400px;margin:0 auto;">
+        <div class="card-body">
+            <form action="" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" name="username" class="form-control" id="username" aria-describedby="usernameHelp" value="{{ admin[1] }}">
+                    <div id="usernameHelp" class="form-text">Username requried for the user to login</div>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" name="userpassword" class="form-control" id="password" value="{{ admin[2] }}">
+                </div>
+                <button type="submit" class="btn btn-success">Update</button>
+                <a href="{{ url_for('admins') }}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

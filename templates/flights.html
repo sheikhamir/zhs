@@ -1,0 +1,230 @@
+{% if logged_in %}
+{% extends 'template.user.html' %}
+{% else %}
+{% extends 'template.base.html' %}
+{% endif %}
+
+{% block title %}Flights - ZHS Tours{% endblock %}
+
+{% block heading %}Flights{% endblock %}
+
+{% block content %}
+<style>
+    .container-custom {
+        width: 80%;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 50px;
+    }
+
+    /* Tabs styling */
+    .container-custom .tabs {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .container-custom .tabs button {
+        flex: 1;
+        padding: 15px;
+        font-size: 16px;
+        cursor: pointer;
+        border: none;
+        background: #00d0ff;
+        color: #fff;
+        border-radius: 5px 5px 0 0;
+    }
+
+    .container-custom .tabs button:not(:last-child) {
+        margin-right: 10px;
+    }
+
+    /* Form styling */
+    .container-custom .form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .container-custom .form > .form-group {
+        flex: 1 1 45%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container-custom .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        font-size: 16px;
+    }
+
+    .container-custom .form-group input,
+    .container-custom .form-group select {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .container-custom .search-button {
+        background: #00d0ff;
+        color: #fff;
+        font-size: 18px;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .container-custom .search-button:hover {
+        background: #00a6c7;
+    }
+
+    /* Additional styles for flight selection */
+    .ticket-type {
+        margin-bottom: 20px;
+    }
+</style>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="mb-3">
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}" role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+{% endwith %}
+<div class="container container-custom">
+    <div class="tabs">
+        <button style="justify-content: center;">Flights</button>
+    </div>
+
+    <form action="" method="POST" class="form">
+        <div class="form-group">
+            <label for="booker-email">Your Email</label>
+            <input type="text" id="booker-email" placeholder="Email address" name="booker_email" required>
+        </div>
+        <div class="form-group ticket-type">
+            <label for="ticket-type">Ticket Type</label>
+            <select id="ticket-type" onchange="toggleReturnDate()" name="ticket_type">
+                <option value="one-way">One Way</option>
+                <option value="return">Return</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="departure-city">Departure City</label>
+            <input type="text" id="departure-city" placeholder="Enter Departure City" name="departure_city" required>
+        </div>
+        <div class="form-group">
+            <label for="destination-city">Destination City</label>
+            <input type="text" id="destination-city" placeholder="Enter Destination City" name="destination_location" required>
+        </div>
+        <div class="form-group">
+            <label for="departure-date">Departure Date</label>
+            <input type="date" id="departure-date" name="departure_date" required>
+        </div>
+        <div class="form-group" id="return-date-group" style="display: none;">
+            <label for="return-date">Return Date</label>
+            <input type="date" id="return-date" name="return_date">
+        </div>
+        
+        <div class="form-group">
+            <label for="passengers">Passengers</label>
+            <input type="number" id="passengers" name="passengers" min="1" value="1" onchange="addPassengerFields()" required>
+        </div>
+
+        <div class="form-group">
+            <label for="class">Class</label>
+            <select id="class" name="flight_class">
+                <option value="economy">Economy</option>
+                <option value="business">Business</option>
+                <option value="first-class">First Class</option>
+            </select>
+        </div>
+
+        <div id="passenger-details" class="row"></div>
+
+        <button class="search-button">Book Now</button>
+    </form>
+
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    // function toggleReturnDate() {
+    //     const ticketType = document.getElementById("ticket-type").value;
+    //     const returnDateGroup = document.getElementById("return-date-group");
+    //     returnDateGroup.style.display = ticketType === "return" ? "block" : "none";
+    // }
+
+    function toggleReturnDate() {
+        var ticketType = document.getElementById("ticket-type").value;
+        document.getElementById("return-date-group").style.display = ticketType === "return" ? "flex" : "none";
+    }
+
+    function addPassengerFields() {
+        let container = document.getElementById("passenger-details");
+        container.innerHTML = ""; // Clear previous fields
+        let numPassengers = document.getElementById("passengers").value;
+        
+        for (let i = 1; i <= numPassengers; i++) {
+            container.innerHTML += `
+                <div class="passenger-group col-md-6 col-lg-4 col-sm-10 form">
+                    <div class="col-12">
+                        <h4>Passenger ${i}</h4>
+                    </div>
+                    <div class="form-group">
+                        <label for="name_${i}">Name</label>
+                        <input type="text" id="name_${i}" name="passenger_${i}_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact_${i}">Contact Info</label>
+                        <input type="text" id="contact_${i}" name="passenger_${i}_contact" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email_${i}">Email</label>
+                        <input type="email" id="email_${i}" name="passenger_${i}_email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="passport_${i}">Passport Number</label>
+                        <input type="text" id="passport_${i}" name="passenger_${i}_passport" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="passport_country_${i}">Country</label>
+                        <input type="text" id="passport_country_${i}" name="passenger_${i}_passport_country" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="passport_issue_${i}">Date of Issue</label>
+                        <input type="date" id="passport_issue_${i}" name="passenger_${i}_passport_issue" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="passport_picture_${i}">Passport Picture</label>
+                        <input type="file" id="passport_picture_${i}" name="passenger_${i}_passport_picture" accept="image/*" required>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    addPassengerFields();
+</script>
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/tempusdominus/js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/tempusdominus/js/moment.timezone.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+<!-- Template Javascript -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'template.admin.html' %}
+
+{% block title %}ZHS Tour - Admin panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4"><i class="fa-solid fa-square-check"></i> Tickets</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Admin Panel</li>
+    </ol>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div>
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            All Tickets
+        </div>
+        <div class="card-body">
+            <table id="datatablesSimple">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Name</th>
+                        <th>email</th>
+                        <th>Package</th>
+                        <th>Price</th>
+                        <th>Departure date</th>
+                        <th>Contact</th>
+                        
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for ticket in tickets %}
+                    <tr>
+                        <td>{{ ticket[7] }}</td>
+                        <td>{{ ticket[1] }}</td>
+                        <td>{{ ticket[2] }}</td>
+                        <td>{{ ticket[3] }}</td>
+                        <td>{{ ticket[4] }}</td>
+                        <td>{{ ticket[5] }}</td>
+                        <td>{{ ticket[6] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

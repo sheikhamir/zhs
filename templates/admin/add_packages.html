@@ -1,0 +1,58 @@
+{% extends 'template.admin.html' %}
+
+{% block title %}Add Packages | ZHS Tour - Admin panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 mb-5">
+    <h1 class="mt-4"><i class="fa-solid fa-box-archive"></i> Packages</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Admin Panel</li>
+    </ol>
+    
+    <div class="card" style="max-width:800px;margin:0 auto;">
+        <div class="card-header text-center">
+            <i class="fa-solid fa-box-archive"></i>
+            Add new package
+        </div>
+        <div class="card-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div>
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            <form action="" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="destination" class="form-label">Destination</label>
+                    <input type="text" name="destination" class="form-control" id="destination" placeholder="Country" required>
+                </div>
+                <div class="mb-3">
+                    <label for="duration" class="form-label">Duration</label>
+                    <input type="text" name="duration" class="form-control" id="duration" placeholder="Days" required>
+                </div>
+                <div class="mb-3">
+                    <label for="person" class="form-label">Person</label>
+                    <input type="text" name="person" class="form-control" id="person" placeholder="No of persons" required>
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Price</label>
+                    <input type="text" name="price" class="form-control" id="price" placeholder="Package Price" required>
+                </div>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea name="description" class="form-control" id="description" placeholder="Package Description" required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="uploadfile" class="form-label">Upload Image</label>
+                    <input type="file" name="uploadfile" class="form-control" id="uploadfile" required>
+                    <div id="fileHelp" class="form-text">Upload Destination Image</div>
+                </div>
+                <button type="submit" class="btn btn-success" name="upload">Save Package</button>
+            </form>        
+        </div>
+    </div>
+</div>
+{% endblock %}

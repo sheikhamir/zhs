@@ -1,0 +1,66 @@
+{% extends 'template.admin.html' %}
+
+{% block title %}Add Airline Ticket | ZHS Tour - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 mb-5">
+    <h1 class="mt-4"><i class="fa-solid fa-plane-departure"></i> Airline Tickets</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Admin Panel</li>
+    </ol>
+    
+    <div class="card" style="max-width:800px;margin:0 auto;">
+        <div class="card-header text-center">
+            <i class="fa-solid fa-plane-departure"></i>
+            Add New Airline Ticket
+        </div>
+        <div class="card-body">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div>
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            <form action="" method="POST">
+                <div class="mb-3">
+                    <label for="airline_name" class="form-label">Airline Name</label>
+                    <input type="text" name="airline_name" class="form-control" id="airline_name" placeholder="e.g., Emirates" required>
+                </div>
+                <div class="mb-3">
+                    <label for="departure_location" class="form-label">Departure Location</label>
+                    <input type="text" name="departure_location" class="form-control" id="departure_location" placeholder="e.g., Dubai" required>
+                </div>
+                <div class="mb-3">
+                    <label for="destination_location" class="form-label">Destination Location</label>
+                    <input type="text" name="destination_location" class="form-control" id="destination_location" placeholder="e.g., London" required>
+                </div>
+                    <div class="mb-3">
+                        <label for="departure_date" class="form-label">Departure Date</label>
+                        <input type="datetime-local" name="departure_date" class="form-control" id="departure_date" required>
+                    </div>
+                <div class="mb-3">
+                    <label for="return_date" class="form-label">Return Date</label>
+                    <input type="datetime-local" name="return_date" class="form-control" id="return_date">
+                </div>
+                <div class="mb-3">
+                    <label for="ticket_price" class="form-label">Ticket Price</label>
+                    <input type="text" name="ticket_price" class="form-control" id="ticket_price" placeholder="e.g., 500.00" required>
+                </div>
+                <div class="mb-3">
+                    <label for="ticket_class" class="form-label">Class</label>
+                    <select name="ticket_class" class="form-control" id="ticket_class" required>
+                        <option value="">Select Class</option>
+                        <option value="Economy">Economy</option>
+                        <option value="Business">Business</option>
+                        <option value="First">First</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Save Ticket</button>
+            </form>        
+        </div>
+    </div>
+</div>
+{% endblock %}

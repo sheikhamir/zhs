@@ -1,0 +1,22 @@
+<?php
+include '../config/dbcon.php';
+
+$name = $_GET['id'];
+
+$query = "DELETE FROM packages WHERE country = '$name'";
+$q = mysqli_query($con,$query);
+
+if ($q)
+{
+
+    echo "Record Deleted";
+    ?>
+    <meta http-equiv="refresh" content="0; url = http://localhost/projects/main_website/admin_panel/add_packages.php" />
+    <?php
+}
+else{
+    echo "Failed to Cancel Booking";
+}
+
+
+?>

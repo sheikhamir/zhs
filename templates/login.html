@@ -1,0 +1,111 @@
+{% extends 'template.base.html' %}
+
+{% block title %}Login - ZHS Tours{% endblock %}
+
+{% block heading %}<i class="fa-solid fa-arrow-right-to-bracket"></i> Login{% endblock %}
+
+{% block breadcrumb %}
+<!-- <nav aria-label="breadcrumb">
+    <ol class="breadcrumb justify-content-center">
+        <li class="breadcrumb-item"><a href="{{ url_for('home') }}">Home</a></li>
+        <li class="breadcrumb-item text-white active" aria-current="page">Login</li>
+    </ol>
+</nav> -->
+{% endblock %}
+
+{% block content %}
+<style>
+    .form-floating>.form-control~label,
+    .form-floating>.form-select~label {color:#BBB;}
+    .form-floating>.form-control~label {transform: scale(0.85) translateY(-0.4rem) translateX(0.15rem);}
+    .form-floating>.form-control~label~.description-msg {opacity:0;transition:all .3s;}
+    .form-floating>.form-control:focus~label {color:#000;}
+    .form-floating>.form-control:focus~label~.description-msg {opacity:1;color:#000;}
+</style>
+<!-- Login Form Start -->
+<div class="container-fluid">
+    <div class="col-lg-4 offset-lg-4 col-md-12 wow fadeInUp" data-wow-delay="0.5s">
+        <form method="post">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="mb-3">
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }}" role="alert">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+            <div class="row g-3">
+                <div class="col-md-12">
+                    <div class="form-floating">
+                        <input type="text" name="username" class="form-control" id="username" placeholder="Username" required>
+                        <label for="username">Username</label>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-floating">
+                        <input type="password" name="userpass" class="form-control" id="userpass" placeholder="Password" required>
+                        <label for="userpass">Password</label>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-floating">
+                        <select class="form-select" name="usertype">
+                            <option value="user" selected>User</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        <label for="usertype">User type</label>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-primary w-100 py-3" type="submit">Login</button>
+                </div>
+            </div>
+        </form>
+        <div class="text-center mt-3">
+            <h5>Don't have an account? <a href="{{ url_for('register') }}">Register</a></h5>
+        </div>
+    </div>
+</div>
+<!-- Login Form End -->
+{% endblock %}
+
+
+{% block javascript %}
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='lib/wow/wow.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/easing/easing.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/waypoints/waypoints.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/owlcarousel/owl.carousel.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/tempusdominus/js/moment.min.js') }}"></script>
+<script src="{{ url_for('static', filename='lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js') }}"></script>
+<!-- Template Javascript -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+<script>
+    console.log( "user_logged_in" );
+    console.log( localStorage.getItem("user_logged_in") );
+    // document.addEventListener("DOMContentLoaded", function() {
+    //     // Check if the user is already logged in on this device
+    //     if (localStorage.getItem("user_logged_in") === "true") {
+    //         alert("You are already logged in on another tab.");
+    //         window.location.href = "/home"; // Redirect to home page
+    //     }
+    // });
+
+    // function setLoginSession() {
+    //     localStorage.setItem("user_logged_in", "true");
+    // }
+
+    // function clearLoginSession() {
+    //     localStorage.removeItem("user_logged_in");
+    // }
+
+    // // Call this function on logout
+    // window.addEventListener("beforeunload", clearLoginSession);
+</script>
+{% endblock %}

@@ -1,0 +1,47 @@
+Here’s a concise description of the functionality implemented in your provided PHP file:
+
+---
+
+### **File Purpose:**
+This file is part of an admin panel for managing tour packages in the `ZHS Tours` application. It allows authenticated administrators to add new tour packages, view existing ones, and delete them from the database.
+
+---
+
+### **Key Functions Performed:**
+
+1. **Session Management:**
+   - Ensures that only logged-in users can access the page.
+   - Redirects unauthenticated users to the login page.
+   - Allows administrators to log out, clearing the session.
+
+2. **Package Addition:**
+   - Accepts input data for new packages (destination, duration, number of persons, price, description, and an image).
+   - Validates and uploads the image file to the server.
+   - Stores the package details, including the uploaded image path, into the `packages` table in the MySQL database.
+
+3. **Package Display:**
+   - Fetches all existing packages from the database.
+   - Displays package details (country, duration, number of persons, price, and description) in an HTML table.
+
+4. **Package Deletion:**
+   - Provides a "Delete" button for each package, allowing admins to remove packages.
+   - Includes a JavaScript confirmation dialog before deletion.
+
+5:Hotel Accommodations Management:
+Add Hotel:
+
+Fields: Hotel Name, Location (City/State), Rating (e.g., 3-star, 5-star), Room Types, Price per Night, Description, and Image upload.
+Validate user input and save details into a hotels table.
+View/Edit/Delete Hotels:
+
+Display all hotels in a table with details like name, location, rating, and price per night.
+Include options to edit or delete entries.5
+6. Airline Tickets Management:
+Add Airline Ticket:
+
+Fields: Airline Name, Departure Location, Destination Location, Departure Date, Return Date (optional), Ticket Price, and Class (Economy/Business/First).
+Validate inputs and store details into an airline_tickets table.
+View/Edit/Delete Airline Tickets:
+
+Display a list of airline tickets with details like airline name, route, price, and date.
+Include options to edit or delete tickets.

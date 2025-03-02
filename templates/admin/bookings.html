@@ -1,0 +1,218 @@
+{% extends 'template.admin.html' %}
+
+{% block title %}Bookings | ZHS Tour - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4"><i class="fa-solid fa-clipboard"></i> Bookings</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Admin Panel</li>
+    </ol>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div>
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Pending Bookings
+        </div>
+        <div class="card-body">
+            {% if bookings %}
+            <table id="datatablesSimple" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Package</th>
+                        <th>Price</th>
+                        <th>Departure Date</th>
+                        <th>Contact</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>{{ booking.byuser }}</td>
+                        <td>{{ booking.name }}</td>
+                        <td>{{ booking.email }}</td>
+                        <td>{{ booking.country }}</td>
+                        <td><small>To be calculated</small></td>
+                        <td>{{ booking.travel_date }}</td>
+                        <td>{{ booking.email }}</td>
+                        <td>
+                            <!-- Accept Booking -->
+                            <form action="{{ url_for('accept_booking', id=booking.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-success btn-sm">Accept</button>
+                            </form>
+                            <!-- Cancel Booking -->
+                            <!-- <form action="{{ url_for('admin_cancel_booking', id=booking.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                                <button type="submit" class="btn btn-danger btn-sm">Cancel</button>
+                            </form> -->
+                            <button type="submit" class="btn btn-danger btn-sm cancel-booking" data-form-url="{{ url_for('admin_cancel_booking', id=booking.id) }}">Cancel</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="modal-container">
+                <div class="form"></div>
+            </div>
+
+            {% else %}
+            <div class="alert alert-info">
+                No pending bookings found.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card mt-5">
+        <div class="card-header">
+            <i class="fas fa-check me-1"></i>
+            Custom Tours
+        </div>
+        <div class="card-body">
+            {% if custom_tours %}
+            <table id="customTours" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Country</th>
+                        <th>Countries</th>
+                        <th>People</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for custom_tour in custom_tours %}
+                    <tr>
+                        <td>{{ custom_tour.name }}</td>
+                        <td>{{ custom_tour.email }}</td>
+                        <td>{{ custom_tour.country }}</td>
+                        <td>{{ custom_tour.total_tours }}</td>
+                        <td>{{ custom_tour.total_people }}</td>
+                        <td>
+                            {{ custom_tour.status|status }}
+
+                            {% if custom_tour.status == 'PENDING' %}
+                                <br/><a href="{{ url_for('custom_tour_user_payment', id=custom_tour.id) }}">Accept and await Payment</a>
+                            {% endif %}
+
+                            {% if custom_tour.status == 'USER_PAYMENT' %}
+                                <br/><a href="{{ url_for('custom_tour_paid', id=custom_tour.id) }}">Mark Paid</a>
+                            {% endif %}
+
+                            {% if custom_tour.status == 'PAID' %}
+                                <br/><a href="{{ url_for('custom_tour_ticketed', id=custom_tour.id) }}">Generate Itinerary</a>
+                            {% endif %}
+
+                            {% if custom_tour.status == 'TICKET' %}
+                                <br/><a href="#">View Itinerary</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="alert alert-info">
+                No custom tours found.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card mt-5">
+        <div class="card-header">
+            <i class="fas fa-check me-1"></i>
+            Approved Bookings
+        </div>
+        <div class="card-body">
+            {% if approved_bookings %}
+            <table id="approvedBookings" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Package</th>
+                        <th>Price</th>
+                        <th>Departure Date</th>
+                        <th>Contact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in approved_bookings %}
+                    <tr>
+                        <td>{{ booking.byuser }}</td>
+                        <td>{{ booking.name }}</td>
+                        <td>{{ booking.email }}</td>
+                        <td>{{ booking.package }}</td>
+                        <td>{{ booking.price }}</td>
+                        <td>{{ booking.deptr_date }}</td>
+                        <td>{{ booking.contact }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="alert alert-info">
+                No approved bookings found.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<div class="modal" tabindex="-1" id="confirm-cancel">
+    <div class="modal-dialog">
+        <form id="cancel-booking-confirmation-form" action="#" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Please mention reason</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="cancel_reason" class="form-label">Cancellation reason</label>
+                        <input type="text" name="cancel_reason" class="form-control" id="cancel_reason" placeholder="e.g., Flights unavailable" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save changes and Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block last_javascript %}
+<script>
+    $(function(){
+        $('.cancel-booking').click(function(){
+            form_url = $(this).data('form-url')
+            $('#cancel-booking-confirmation-form').attr('action', form_url);
+            $('#confirm-cancel').modal('show');
+        })
+        $('.close').click(function(){
+            $('#cancel-booking-confirmation-form').attr('action', '#');
+            $('#confirm-cancel').modal('hide');
+        })
+    })
+</script>
+{% endblock %}
