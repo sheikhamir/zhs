@@ -1,0 +1,75 @@
+{% extends 'template.admin.html' %}
+
+{% block title %}Manage Payments | ZHS Tour - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4"><i class="fa-solid fa-credit-card"></i> Payments</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Admin Panel</li>
+    </ol>
+
+    <h1 class="text-center mb-3">View Payments</h1>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div>
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Payment List
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User ID</th>
+                        <th>Booking ID</th>
+                        <th>Booking For</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments %}
+                    <tr>
+                        <td>{{ payment.id }}</td>
+                        <td>{{ payment.user_id }}</td>
+                        <td>{{ payment.booking_id }}</td>
+                        <td>
+                            {% if payment.booking_for == 'HOTEL' %}
+                                <i class="fa-solid fa-hotel"></i> Hotel
+                            {% endif %}
+
+                            {% if payment.booking_for == 'FLIGHT' %}
+                                <i class="fa-solid fa-plane-departure"></i>
+                            {% endif %}
+                        </td>
+                        <td>{{ payment.payment_amount }}</td>
+                        <td>{{ payment.payment_method }}</td>
+                        <td>{{ payment.payment_status }}</td>
+                        <td>
+                            <a href="{{ url_for('get_payment', id=payment.id) }}" class="btn btn-primary btn-sm">Edit</a>
+                            <form action="{{ url_for('delete_payment', id=payment.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

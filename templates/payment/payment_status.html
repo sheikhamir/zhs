@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Status | ZHS Tour</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .status-container {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+        .status-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        .success {
+            color: #28a745;
+        }
+        .failure {
+            color: #dc3545;
+        }
+        .btn-home {
+            background: #635bff;
+            color: white;
+            padding: 12px;
+            font-weight: bold;
+            width: 100%;
+            border-radius: 6px;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-home:hover {
+            background: #5345ff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Payment Success Page -->
+    <div class="status-container" id="success-container">
+        <i class="fas fa-check-circle status-icon success"></i>
+        <h3>Payment Successful!</h3>
+        <p>Your transaction was completed successfully.</p>
+        <a href="/" class="btn btn-home">Return to Home</a>
+    </div>
+
+    <!-- Payment Failure Page -->
+    <div class="status-container" id="failure-container" style="display: none;">
+        <i class="fas fa-times-circle status-icon failure"></i>
+        <h3>Payment Failed!</h3>
+        <p>Unfortunately, your transaction could not be completed.</p>
+        <a href="{{ url_for('my_bookings') }}" class="btn btn-home">Try Again</a>
+    </div>
+
+    <script>
+        // Simulating success or failure status dynamically
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get('status');
+        
+        if (status === 'failure') {
+            document.getElementById('success-container').style.display = 'none';
+            document.getElementById('failure-container').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

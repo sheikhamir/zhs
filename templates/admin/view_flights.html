@@ -27,6 +27,7 @@
             <table id="datatablesSimple">
                 <thead>
                     <tr>
+                        <th scope="col">ID</th>
                         <th scope="col">Email</th>
                         <th scope="col">Ticket Type</th>
                         <th scope="col">Flight Class</th>
@@ -42,6 +43,7 @@
                 <tbody>
                     {% for flight in flights %}
                         <tr>
+                            <td>FL{{ flight.id }}</td>
                             <td>{{ flight.email }}</td>
                             <td>{{ flight.ticket_type }}</td>
                             <td>{{ flight.flight_class }}</td>
@@ -57,9 +59,9 @@
                                     <br/><a class="btn btn-primary btn-sm" href="{{ url_for('view_flight_details', id=flight.id) }}">Review</a>
                                 {% endif %}
 
-                                {% if flight.status == 'USER_PAYMENT' %}
+                                <!-- {% if flight.status == 'USER_PAYMENT' %}
                                     <br/><a class="btn btn-success btn-sm" href="{{ url_for('flight_paid', id=flight.id) }}">Mark Paid</a>
-                                {% endif %}
+                                {% endif %} -->
 
                                 {% if flight.status == 'PAID' %}
                                     <br/><a class="btn btn-secondary btn-sm" href="{{ url_for('flight_ticketed', id=flight.id) }}">Generate Ticket</a>

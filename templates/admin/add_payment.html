@@ -1,0 +1,64 @@
+{% extends 'template.admin.html' %}
+
+{% block title %}Add Payments | ZHS Tour - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <h1 class="mt-4"><i class="fa-solid fa-credit-card"></i> Payments</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Admin Panel</li>
+    </ol>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div>
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <!-- Create Payment Form -->
+    <h2 class="text-center mb-3">Add New Payment</h2>
+    <div class="card" style="max-width:500px;margin:0 auto;">
+        <div class="card-body">
+            <form action="{{ url_for('create_payment') }}" method="POST">
+                <div class="mb-3">
+                    <label for="user_id" class="form-label">User ID</label>
+                    <input type="number" name="user_id" class="form-control" id="user_id" required>
+                </div>
+                <div class="mb-3">
+                    <label for="booking_id" class="form-label">Booking ID</label>
+                    <input type="number" name="booking_id" class="form-control" id="booking_id" required>
+                </div>
+                <div class="mb-3">
+                    <label for="booking_for" class="form-label">Booking For</label>
+                    <select name="booking_for" class="form-control" id="booking_for">
+                        <option value="HOTEL">Hotel</option>
+                        <option value="FLIGHT">Flight</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="payment_amount" class="form-label">Payment Amount</label>
+                    <input type="text" name="payment_amount" class="form-control" id="payment_amount" required>
+                </div>
+                <div class="mb-3">
+                    <label for="payment_method" class="form-label">Payment Method</label>
+                    <input type="text" name="payment_method" class="form-control" id="payment_method" required>
+                </div>
+                <div class="mb-3">
+                    <label for="payment_status" class="form-label">Payment Status</label>
+                    <select name="payment_status" class="form-control" id="payment_status">
+                        <option value="PENDING">Pending</option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="REFUNDED">Refunded</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Save Payment</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

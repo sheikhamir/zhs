@@ -31,6 +31,7 @@
         <table class="table">
             <thead class="thead-dark">
                 <tr>
+                    <th scope="col">ID</th>
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Package</th>
@@ -43,6 +44,7 @@
             <tbody>
                 {% for pending_booking in bookings_pending %}
                 <tr>
+                    <td>PK{{ pending_booking.id }}</td>
                     <td>{{ pending_booking.name }}</td>
                     <td>{{ pending_booking.email }}</td>
                     <td>{{ pending_booking.country }}</td>
@@ -87,7 +89,7 @@
             <tbody>
                 {% for booking in bookings_approved %}
                 <tr>
-                    <td>{{ booking.id }}</td>
+                    <td>PK{{ booking.id }}</td>
                     <td>{{ booking.name }}</td>
                     <td>{{ booking.email }}</td>
                     <td>{{ booking.package }}</td>
@@ -95,9 +97,9 @@
                     <td>{{ booking.departure_date }}</td>
                     <td>{{ booking.contact }}</td>
                     <td>
-                        Awaiting payment
+                        {{ booking.status }}
                         {% if booking.status == 'USER_PAYMENT' %}
-                            <br/><a href="#">Pay Now</a>
+                            <br/><a href="{{ url_for('user_make_payment_page', id=booking.payment_id) }}">Pay Now</a>
                         {% endif %}
                     </td>
                 </tr>
@@ -120,6 +122,7 @@
         <table class="table">
             <thead class="thead-dark">
                 <tr>
+                    <th scope="col">ID</th>
                     <th scope="col">Name</th>
                     <th scope="col">Email</th>
                     <th scope="col">Country</th>
@@ -129,14 +132,33 @@
                 </tr>
             </thead>
             <tbody>
-                {% for booking in custom_tours %}
+                {% for tour in custom_tours %}
                 <tr>
-                    <td>{{ booking.name }}</td>
-                    <td>{{ booking.email }}</td>
-                    <td>{{ booking.country }}</td>
-                    <td>{{ booking.people }}</td>
-                    <td>{{ booking.total_tours }}</td>
-                    <td>{{ booking.status|status }}</td>
+                    <td>CT{{ tour.id }}</td>
+                    <td>{{ tour.name }}</td>
+                    <td>{{ tour.email }}</td>
+                    <td>{{ tour.country }}</td>
+                    <td>{{ tour.people }}</td>
+                    <td>{{ tour.total_tours }}</td>
+                    <td>
+                        {{ tour.status|status }}
+
+                        {% if tour.status == 'PENDING' %}
+                            <br/><a href="#">Pay Now</a>
+                        {% endif %}
+
+                        {% if tour.status == 'CONFIRMED' %}
+                            <br/><small>Awaiting Ticket</small>
+                        {% endif %}
+
+                        {% if tour.status == 'CANCELLED' %}
+                            <br/><a href="#">CANCELLED</a>
+                        {% endif %}
+
+                        {% if tour.status == 'REJECTED' %}
+                            <br/><a href="#">REJECTED</a>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -157,6 +179,7 @@
         <table class="table">
             <thead class="thead-dark">
                 <tr>
+                    <th scope="col">ID</th>
                     <th scope="col">Email</th>
                     <th scope="col">Ticket Type</th>
                     <th scope="col">Flight Class</th>
@@ -171,6 +194,7 @@
             <tbody>
                 {% for flight in flights %}
                 <tr>
+                    <td>FL{{ flight.id }}</td>
                     <td>{{ flight.email }}</td>
                     <td>{{ flight.ticket_type }}</td>
                     <td>{{ flight.flight_class }}</td>
@@ -183,11 +207,11 @@
                         {{ flight.status|status }}
 
                         {% if flight.status == 'USER_PAYMENT' %}
-                            <br/><a href="#">Pay Now</a>
+                            <br/><a href="{{ url_for('user_make_payment_page', id=flight.payment_id) }}">Pay Now</a>
                         {% endif %}
 
                         {% if flight.status == 'PAID' %}
-                            <br/><small>Awaiting ticket</small>
+                            <br/><small>Awaiting Ticket</small>
                         {% endif %}
 
                         {% if flight.status == 'TICKET' %}

@@ -25,21 +25,38 @@
                     Propose Flight Options
                 </div>
                 <div class="card-body">
-                    <form id="flightProposalForm">
+                    <form id="flightProposalForm" method="POST">
                         <div class="row">
                             <!-- Airline -->
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="airline">Airline</label>
-                                    <input type="text" class="form-control" id="airline" name="airline" required placeholder="Eg: PIA, Air Sial">
+                                    <input type="text" class="form-control" id="airline" name="airline" required placeholder="Eg: Emirates, Cathay Pacific">
+                                    <input type="hidden" name="flight_id" value="{{ flight.id }}"/>
+                                </div>
+                            </div>
+
+                            <!-- Total Cost -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="total_cost">Total Cost</label>
+                                    <input type="number" class="form-control" id="total_cost" name="total_cost" min="0" step="0.01" required placeholder="Eg: 1250.00">
                                 </div>
                             </div>
                 
-                            <!-- Timings -->
+                            <!-- Departure Flight Date -->
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="flight_timings">Flight Timings</label>
-                                    <input type="time" class="form-control" id="flight_timings" name="flight_timings" required placeholder="Eg: 22:45 PM">
+                                    <label for="departure_date">Departure Flight</label>
+                                    <input type="datetime-local" class="form-control" id="departure_date" name="departure_date" required>
+                                </div>
+                            </div>
+
+                            <!-- Return Flight Date -->
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="return_date">Return Flight</label>
+                                    <input type="datetime-local" class="form-control" id="return_date" name="return_date" required>
                                 </div>
                             </div>
                 
@@ -50,15 +67,7 @@
                                     <input type="text" class="form-control" id="layovers" name="layovers" placeholder="Eg: Turkey 8 Hours (Optional)">
                                 </div>
                             </div>
-                
-                            <!-- Total Cost -->
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="total_cost">Total Cost (PKR)<br/><small>(Including Service Charges)</small></label>
-                                    <input type="number" class="form-control" id="total_cost" name="total_cost" min="0" step="0.01" required placeholder="Eg: 25000.00">
-                                </div>
-                            </div>
-                
+                            
                             <!-- Payment Instructions -->
                             <div class="col-md-12">
                                 <div class="form-group">

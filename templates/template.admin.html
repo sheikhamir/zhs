@@ -63,6 +63,10 @@
                         <a class="nav-link {{ 'active' if request.path in [url_for('view_packages'), url_for('add_packages')] else '' }}" href="{{ url_for('view_packages') }}">
                             <div class="sb-nav-link-icon"><i class="fa-solid fa-box-archive"></i></div> Packages
                         </a>
+
+                        <a class="nav-link {{ 'active' if request.path in [url_for('view_payments'), url_for('add_payment')] else '' }}" href="{{ url_for('view_payments') }}">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-sack-dollar"></i></div> Payments
+                        </a>
                         <!-- <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
 

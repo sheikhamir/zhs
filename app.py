@@ -699,7 +699,7 @@ def view_flights():
     
     return render_template('admin/view_flights.html', flights=flights)
 
-@app.route('/admin/flights/<int:id>')
+@app.route('/admin/flights/<int:id>', methods=['GET', 'POST'])
 def view_flight_details(id):
     # Checks for authentication
     if not logged_in() or not is_admin():
@@ -716,11 +716,64 @@ def view_flight_details(id):
         flash('Flight not found!', 'danger')
         return redirect(url_for('view_flights'))
     
+    if request.method == 'POST':
+        # Fetch form data
+        flight_id = request.form.get('flight_id')
+        airline = request.form.get('airline')
+        total_cost = request.form.get('total_cost')
+        departure_date = request.form.get('departure_date')
+        return_date = request.form.get('return_date')
+        layovers = request.form.get('layovers')
+        payment_instructions = request.form.get('payment_instructions')
+
+        formatted_departure_date = datetime.strptime(departure_date, "%Y-%m-%dT%H:%M")  # Convert to Python datetime
+        formatted_return_date = datetime.strptime(return_date, "%Y-%m-%dT%H:%M")  # Convert to Python datetime
+
+        # Validate inputs
+        if not flight_id or not airline or not total_cost or not departure_date or not return_date or not layovers or not payment_instructions:
+            flash('All fields are required!', 'danger')
+            return redirect(url_for('view_flight_details'))
+
+        try:
+            print(flight)
+            # Lets try to find the user_id using email
+            cur.execute("SELECT * FROM `users` where `email`=%s", (flight.get('email'),))
+            user_info = cur.fetchone()
+            user_id = user_info.get('id') if user_info else None
+
+            # Insert data into the database
+            query = """
+                INSERT INTO flight_details 
+                (flight_id, airline, cost, departure_flight, return_flight, layovers, instructions)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """
+            cur.execute(query, (flight_id, airline, total_cost, formatted_departure_date, formatted_return_date, layovers, payment_instructions))
+            mysql.connection.commit()
+
+            # Create new payment detail in the database
+            payment_query = """
+                INSERT INTO payments 
+                (user_id, user_email, booking_id, booking_for, payment_amount, payment_method)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """
+            cur.execute(payment_query, (user_id, flight.get('email'), id, 'FLIGHT', total_cost, 'CARD'))
+            payment_id = cur.lastrowid
+            mysql.connection.commit()
+
+            # Set flight status to user-payment
+            status = 'USER_PAYMENT'
+            cur.execute("UPDATE flights SET status = %s, payment_id = %s WHERE id = %s", (status, payment_id, id, ))
+            mysql.connection.commit()
+
+            flash('Flight proposal submitted successfully!', 'success')
+            return redirect(url_for('view_flights'))
+        except Exception as e:
+            flash(f'Error: {str(e)}', 'danger')
+            return redirect(url_for('view_flights'))
+    
     # Fetch flight passengers
     cur.execute("SELECT * FROM flight_passengers WHERE flight_id = %s", (flight.get('id'),))
     passengers = cur.fetchall()
-
-    print(passengers)
 
     cur.close()
     
@@ -743,7 +796,6 @@ def flight_payment(id):
             flash('Flight not found!', 'danger')
             return redirect(url_for('bookings'))
 
-        # Delete the booking from the bookings table
         cur.execute("UPDATE flights SET status='USER_PAYMENT' WHERE id = %s", (id,))
         mysql.connection.commit()
         cur.close()
@@ -1046,6 +1098,81 @@ def delete_admin(id):
 
     flash('Admin deleted successfully!', 'success')
     return redirect(url_for('admins'))
+
+@app.route('/admin/payments', methods=['GET', 'POST'])
+def add_payment():
+    if request.method == 'POST':
+        # Fetch form data
+        user_id = request.form.get('user_id')
+        booking_id = request.form.get('booking_id')
+        booking_for = request.form.get('booking_for')
+        payment_amount = request.form.get('payment_amount')
+        payment_method = request.form.get('payment_method')
+        payment_status = request.form.get('payment_status', 'PENDING')
+        
+        cur = mysql.connection.cursor()
+        sql = """
+            INSERT INTO payments (user_id, booking_id, booking_for, payment_amount, payment_method, payment_status)
+            VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        cur.execute(sql, (user_id, booking_id, booking_for, payment_amount, payment_method, payment_status))
+        mysql.connection.commit()
+        cur.close()
+        
+        flash('Payment created successfully!', 'success')
+        return redirect(url_for('add_payment'))
+    
+    return render_template('admin/add_payment.html')
+
+@app.route('/admin/payments/list', methods=['GET'])
+def view_payments():
+    cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cur.execute("SELECT * FROM payments")
+    payments = cur.fetchall()
+    cur.close()
+    return render_template('admin/view_payments.html', payments=payments)
+
+@app.route('/admin/payments/<int:id>', methods=['GET'])
+def get_payment(id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM payments WHERE id = %s", (id,))
+    payment = cur.fetchone()
+    cur.close()
+    if payment:
+        return render_template('admin/payment_detail.html', payment=payment)
+    flash('Payment not found', 'danger')
+    return redirect(url_for('view_payments'))
+
+@app.route('/admin/payments/update/<int:id>', methods=['POST'])
+def update_payment(id):
+    user_id = request.form.get('user_id')
+    booking_id = request.form.get('booking_id')
+    booking_for = request.form.get('booking_for')
+    payment_amount = request.form.get('payment_amount')
+    payment_method = request.form.get('payment_method')
+    payment_status = request.form.get('payment_status')
+    
+    cur = mysql.connection.cursor()
+    sql = """
+        UPDATE payments 
+        SET user_id = %s, booking_id = %s, booking_for = %s, payment_amount = %s, payment_method = %s, payment_status = %s
+        WHERE id = %s
+    """
+    cur.execute(sql, (user_id, booking_id, booking_for, payment_amount, payment_method, payment_status, id))
+    mysql.connection.commit()
+    cur.close()
+    
+    flash('Payment updated successfully!', 'success')
+    return redirect(url_for('view_payments'))
+
+@app.route('/admin/payments/delete/<int:id>', methods=['POST'])
+def delete_payment(id):
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM payments WHERE id = %s", (id,))
+    mysql.connection.commit()
+    cur.close()
+    flash('Payment deleted successfully!', 'success')
+    return redirect(url_for('view_payments'))
 
 # Public routes
 @app.route('/login', methods=['GET', 'POST'])
@@ -1391,7 +1518,7 @@ def my_bookings():
     cur.execute("SELECT * FROM cancelled_bookings WHERE email = %s", (user_email,))
     bookings_cancelled = cur.fetchall()
 
-    # Fetch custom tours
+    # Fetch custom tours with payment_id
     cur.execute("""
         SELECT 
             GROUP_CONCAT(td.country) as country, 
@@ -1403,16 +1530,18 @@ def my_bookings():
             ct.details as details,
             ct.status as status,
             COUNT(DISTINCT td.id) AS total_tours, 
-            COUNT(DISTINCT tt.id) AS total_people 
+            COUNT(DISTINCT tt.id) AS total_people,
+            p.id as payment_id  -- Fetch payment ID if exists
         FROM `custom_tours` ct
         JOIN `tour_destinations` td ON td.tour_id = ct.id
         LEFT JOIN `tour_travelers` tt ON tt.tour_id = ct.id
+        LEFT JOIN `payments` p ON p.booking_for = 'HOTEL' AND p.booking_id = ct.id  -- Join with payments
         WHERE ct.email = %s
         GROUP BY ct.id
     """, (user_email,))
     custom_tours = cur.fetchall()
 
-    # Fetch flight bookings
+    # Fetch flight bookings with payment_id
     cur.execute("""
         SELECT 
             f.id as id,
@@ -1424,9 +1553,11 @@ def my_bookings():
             f.return_date as return_date,
             f.flight_class as flight_class,
             f.status as status,
-            GROUP_CONCAT(fp.name) as people 
+            GROUP_CONCAT(fp.name) as people,
+            p.id as payment_id  -- Fetch payment ID if exists
         FROM `flights` f
         JOIN `flight_passengers` fp ON fp.flight_id = f.id
+        LEFT JOIN `payments` p ON p.booking_for = 'FLIGHT' AND p.booking_id = f.id  -- Join with payments
         WHERE f.email = %s
         GROUP BY f.id
         ORDER BY f.created_at DESC
@@ -1551,6 +1682,64 @@ def cancel_booking(id):
     except Exception as e:
         flash(f'Error canceling booking: {str(e)}', 'danger')
         return redirect(url_for('my_bookings'))
+
+@app.route('/make-payment/<int:id>', methods=['GET', 'POST'])
+def user_make_payment_page(id):
+    # Checks for authentication
+    if not logged_in():
+        flash("Login required", 'danger')
+        return redirect(url_for('login'))
+    
+    try:
+        # Fetch the booking details
+        cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cur.execute("SELECT * FROM `payments` WHERE `id` = %s", (id,))
+        payment = cur.fetchone()
+
+        if request.method == 'POST':
+            try:
+                cardholder = request.form.get('cardholder')
+                cardnumber = request.form.get('cardnumber')
+                expiry = request.form.get('expiry')
+                cvv = request.form.get('cvv')
+                payment_id = request.form.get('payment_id')
+
+                # Update the payment record
+                cur.execute("UPDATE `payments` SET `payment_status`='COMPLETED', `timestamp`=NOW() WHERE `id`=%s", (id,))
+                mysql.connection.commit()
+
+                booking_for = payment.get('booking_for')
+                table_name = 'flights' if booking_for == 'FLIGHT' else 'hotel'
+
+                if booking_for == 'FLIGHT':
+                    # Update the record
+                    cur.execute("UPDATE `flights` SET `payment_status`='COMPLETED', `timestamp`=NOW() WHERE `id`=%s", (id,))
+                    mysql.connection.commit()
+
+                if booking_for == 'HOTEL':
+                    # Update the record
+                    cur.execute("UPDATE `hotel_booking` SET `payment_status`='COMPLETED', `timestamp`=NOW() WHERE `id`=%s", (id,))
+                    mysql.connection.commit()
+
+                if booking_for == 'TOUR':
+                    # Update the record
+                    cur.execute("UPDATE `custom_tours` SET `status`='CONFIRMED' WHERE `id`=%s", (id,))
+                    mysql.connection.commit()
+
+                return redirect(url_for('user_payment_status'))                
+
+            except Exception as e:
+                return redirect(url_for('user_payment_status', status='failure'))
+
+        return render_template('payment/payment.html', payment=payment)
+
+    except Exception as e:
+        flash(f'Error: {str(e)}', 'danger')
+        return redirect(url_for('view_tickets'))
+    
+@app.route('/payment-status', methods=['GET'])
+def user_payment_status():
+    return render_template('payment/payment_status.html')
 
 @app.template_filter('currency')
 def currency_format(value):
